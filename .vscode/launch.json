@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "KOFUKU (iPhone)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "145EF60C-5EE2-426A-A567-615861831EC9"
+        },
+        {
+            "name": "KOFUKU (Any Device)",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+} 
