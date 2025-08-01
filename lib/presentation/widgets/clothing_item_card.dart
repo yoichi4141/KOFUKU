@@ -81,36 +81,37 @@ class ClothingItemCard extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h), // パディング最適化
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 最小サイズに制限
                   children: [
                     // タイトル
                     Text(
                       item.title,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 13.sp,
+                        fontSize: 11.sp, // 13sp → 11spに調整
                         fontWeight: FontWeight.w500,
-                        height: 1.3,
+                        height: 1.15, // 1.3 → 1.15に調整
                         color: AppTheme.darkCharcoal,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 2.h), // 4h → 2hに調整
                     
                     // ペンネーム
                     Text(
                       item.ownerPenName,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 10.sp,
+                        fontSize: 8.sp, // 10sp → 8spに調整
                         color: AppTheme.softGray,
-                        letterSpacing: 0.2,
+                        letterSpacing: 0.05, // 0.2 → 0.05に調整
                       ),
                     ),
                     
-                    const Spacer(),
+                    SizedBox(height: 4.h), // Spacerではなく固定サイズに変更
                     
                     // 価格と共感数
                     Row(
@@ -122,7 +123,7 @@ class ClothingItemCard extends StatelessWidget {
                             (Match m) => '${m[1]},',
                           )}',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 14.sp,
+                            fontSize: 12.sp, // 14sp → 12spに調整
                             fontWeight: FontWeight.w600,
                             color: AppTheme.darkCharcoal,
                           ),
@@ -135,14 +136,14 @@ class ClothingItemCard extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.favorite,
-                              size: 12.sp,
+                              size: 10.sp, // 12sp → 10spに調整
                               color: AppTheme.loveRed,
                             ),
-                            SizedBox(width: 3.w),
+                            SizedBox(width: 2.w), // 3w → 2wに調整
                             Text(
                               item.empathyCount.toString(),
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontSize: 10.sp,
+                                fontSize: 8.sp, // 10sp → 8spに調整
                                 color: AppTheme.loveRed,
                                 fontWeight: FontWeight.w500,
                               ),
