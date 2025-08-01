@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../utils/app_theme.dart';
 import '../../utils/dummy_data.dart';
@@ -16,11 +17,11 @@ class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
   late TabController _tabController;
 
   // プロフィール用のダミーデータ
-  final String userName = '断食上クリスティーナ・エリーゼ';
+  final String userName = '古着クリエイター';
   final bool isVerified = true;
-  final String followingCount = '162';
-  final String followersCount = '32K';
-  final String shortBio = '美しい女、勇ましい';
+  final String followingCount = '444';
+  final String followersCount = '666';
+  final String shortBio = 'ビンテージ';
   final String detailedBio = '''古物の心を理解し、人と物との出会いを紡ぎます。
 世界の中に息づく歴史、物の命とその背景を通読します。
 発見の日々は続く、過去と未来。''';
@@ -217,14 +218,7 @@ class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Edit profile 機能は開発中です'),
-                            backgroundColor: AppTheme.darkCharcoal,
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
+                        context.go('/profile-edit');
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.darkCharcoal,
@@ -513,7 +507,10 @@ class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(height: 20.h),
-            _buildSettingsItem(Icons.edit, 'プロフィールを編集'),
+            _buildSettingsItem(Icons.edit, 'プロフィールを編集', action: () {
+              Navigator.pop(context);
+              context.go('/profile-edit');
+            }),
             _buildSettingsItem(Icons.privacy_tip, 'プライバシー設定'),
             _buildSettingsItem(Icons.notifications, '通知設定'),
             _buildSettingsItem(Icons.help, 'ヘルプ'),
@@ -548,7 +545,7 @@ class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildSettingsItem(IconData icon, String title) {
+  Widget _buildSettingsItem(IconData icon, String title, {VoidCallback? action}) {
     return ListTile(
       leading: Icon(icon, color: AppTheme.darkCharcoal),
       title: Text(
@@ -557,7 +554,7 @@ class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
           color: AppTheme.darkCharcoal,
         ),
       ),
-      onTap: () {
+      onTap: action ?? () {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

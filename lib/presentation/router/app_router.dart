@@ -8,6 +8,8 @@ import '../pages/onboarding/splash_page.dart';
 import '../pages/onboarding/welcome_page.dart';
 import '../pages/onboarding/signup_page.dart';
 import '../pages/onboarding/login_page.dart';
+import '../pages/profile_edit_page.dart';
+// import '../pages/category_search_page.dart';
 
 part 'app_router.g.dart';
 
@@ -36,6 +38,11 @@ GoRouter appRouter(Ref ref) {
         path: '/login',
         name: 'login',
         builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/profile-edit',
+        name: 'profile-edit',
+        builder: (context, state) => const ProfileEditPage(),
       ),
       
       // メインアプリ
