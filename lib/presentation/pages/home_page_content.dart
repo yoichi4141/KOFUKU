@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/dummy_data.dart';
 import '../../utils/app_theme.dart';
-import '../widgets/clothing_item_card.dart';
+import '../widgets/empathy_item_card.dart';
 
 class HomePageContent extends ConsumerStatefulWidget {
   const HomePageContent({super.key});
@@ -285,7 +285,18 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  return ClothingItemCard(item: filteredItems[index]);
+                  return EmpathyItemCard(
+                    item: filteredItems[index],
+                    onTap: () {
+                      // アイテム詳細ページ（未実装）
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${filteredItems[index].title}の詳細ページ（未実装）'),
+                          backgroundColor: AppTheme.darkCharcoal,
+                        ),
+                      );
+                    },
+                  );
                 },
                 childCount: filteredItems.length,
               ),

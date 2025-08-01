@@ -6,6 +6,7 @@ import '../../utils/app_theme.dart';
 import 'home_page_content.dart';
 import 'category_search_page.dart';
 import 'user_list_page.dart';
+import 'empathy_page.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
@@ -26,7 +27,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     _pages = [
       const HomePageContent(), // ボトムナビゲーションなしのホームページ
       const CategorySearchPage(), // 検索ページ
-      const FavoritePage(), // 共感ページ（仮）
+      const EmpathyPage(), // 共感ページ
       const MessagePage(), // メッセージページ（仮）
       const UserListPage(), // マイページ
     ];
