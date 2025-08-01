@@ -2,13 +2,12 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../pages/home_page.dart';
+import '../pages/main_page.dart';
 import '../pages/user_list_page.dart';
 import '../pages/onboarding/splash_page.dart';
 import '../pages/onboarding/welcome_page.dart';
 import '../pages/onboarding/signup_page.dart';
 import '../pages/onboarding/login_page.dart';
-import '../pages/category_search_page.dart';
 
 part 'app_router.g.dart';
 
@@ -42,19 +41,20 @@ GoRouter appRouter(Ref ref) {
       // メインアプリ
       GoRoute(
         path: '/',
-        name: 'home',
-        builder: (context, state) => const HomePage(),
+        name: 'main',
+        builder: (context, state) => const MainPage(),
       ),
       GoRoute(
         path: '/users',
         name: 'users',
         builder: (context, state) => const UserListPage(),
       ),
-      GoRoute(
-        path: '/category-search',
-        name: 'category_search',
-        builder: (context, state) => const CategorySearchPage(),
-      ),
+      // 以下のルートは MainPage内でタブ管理されるため削除
+      // GoRoute(
+      //   path: '/category-search',
+      //   name: 'category_search', 
+      //   builder: (context, state) => const CategorySearchPage(),
+      // ),
     ],
   );
 } 
