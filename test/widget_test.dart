@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kofuku/main.dart';
 
 void main() {
-  testWidgets('KOFUKU home page smoke test', (WidgetTester tester) async {
+  testWidgets('Splash screen displays correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
       const ProviderScope(
@@ -20,51 +20,64 @@ void main() {
       ),
     );
 
-    // Verify that KOFUKU title is displayed
+    // Verify that KOFUKU logo is displayed on splash screen
     expect(find.text('KOFUKU'), findsOneWidget);
-    
-    // Verify that search bar is displayed
-    expect(find.text('愛のエッセイを検索'), findsOneWidget);
-    
-    // Verify that "愛を語る" button is displayed
-    expect(find.text('愛を語る'), findsOneWidget);
-    
-    // Verify that category tabs are displayed
-    expect(find.text('すべて'), findsOneWidget);
-    expect(find.text('アウター'), findsOneWidget);
-    
-    // Verify that statistical information is displayed
-    expect(find.text('愛のエッセイ'), findsOneWidget);
-    expect(find.text('共感の総数'), findsOneWidget);
+    expect(find.text('その服に、あなたの"愛"は\nありますか？'), findsOneWidget);
+    expect(find.text('HOSPITALITY IS BEAUTY'), findsOneWidget);
   });
 
-  testWidgets('Category filtering works', (WidgetTester tester) async {
+  testWidgets('Welcome page displays after splash', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MyApp(),
       ),
     );
 
-    // Tap on "アウター" category
-    await tester.tap(find.text('アウター'));
-    await tester.pump();
+    // Wait for splash screen animation to complete and navigate to welcome
+    await tester.pumpAndSettle(const Duration(seconds: 5));
 
-    // Verify the category is selected (this test assumes UI updates properly)
-    // The actual filtering behavior would need more specific assertions based on data
+    // Verify welcome page elements
+    expect(find.text('あなたの愛の物語を\n共有しませんか？'), findsOneWidget);
+    expect(find.text('会員登録'), findsOneWidget);
+    expect(find.text('ログイン'), findsOneWidget);
   });
 
-  testWidgets('"愛を語る" button shows snackbar', (WidgetTester tester) async {
+  testWidgets('Navigation from welcome to signup works', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MyApp(),
       ),
     );
 
-    // Tap the "愛を語る" button
-    await tester.tap(find.text('愛を語る'));
-    await tester.pump();
+    // Wait for welcome page
+    await tester.pumpAndSettle(const Duration(seconds: 5));
 
-    // Verify that snackbar message is displayed
-    expect(find.text('愛のエッセイを書く機能は開発中です'), findsOneWidget);
+    // Tap signup button
+    await tester.tap(find.text('会員登録'));
+    await tester.pumpAndSettle();
+
+    // Verify signup page elements
+    expect(find.text('会員登録'), findsWidgets);
+    expect(find.text('かんたん登録'), findsOneWidget);
+    expect(find.text('Apple でサインアップ'), findsOneWidget);
+  });
+
+  testWidgets('Navigation from welcome to login works', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+
+    // Wait for welcome page
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    // Tap login button
+    await tester.tap(find.text('ログイン'));
+    await tester.pumpAndSettle();
+
+    // Verify login page elements
+    expect(find.text('ログイン'), findsWidgets);
+    expect(find.text('メールアドレスとパスワードを\n入力してください'), findsOneWidget);
   });
 }
