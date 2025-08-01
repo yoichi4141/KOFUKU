@@ -60,15 +60,50 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
   List<ClothingItem> _getFilteredItems() {
     // 最後に選択されたカテゴリに基づいてアイテムをフィルタリング
     final selectedCategory = _selectedPath.lastWhere((cat) => cat != null, orElse: () => null);
+    
+    // カテゴリが選択されていない場合は全アイテムを表示
     if (selectedCategory == null) {
       return DummyData.clothingItems;
     }
     
-    // 簡単なフィルタリング（実際にはもっと複雑なロジックが必要）
-    return DummyData.clothingItems.where((item) {
-      return item.category.toLowerCase().contains(selectedCategory.name.toLowerCase()) ||
-             selectedCategory.name.toLowerCase().contains(item.category.toLowerCase());
+    // カテゴリに基づいてフィルタリング
+    final filteredItems = DummyData.clothingItems.where((item) {
+      // より柔軟なマッチング
+      final categoryName = selectedCategory.name.toLowerCase();
+      final itemCategory = item.category.toLowerCase();
+      
+      // 直接マッチ、部分マッチ、関連キーワードマッチ
+      return itemCategory.contains(categoryName) ||
+             categoryName.contains(itemCategory) ||
+             _isRelatedCategory(categoryName, itemCategory);
     }).toList();
+    
+    // フィルタ結果が空の場合、少なくとも3つのアイテムを表示
+    if (filteredItems.isEmpty) {
+      return DummyData.clothingItems.take(3).toList();
+    }
+    
+    return filteredItems;
+  }
+  
+  bool _isRelatedCategory(String selectedCategory, String itemCategory) {
+    // カテゴリの関連性をチェック
+    final categoryMappings = {
+      'アウター': ['コート', 'ジャケット', 'カーディガン', 'ブレザー'],
+      'トップス': ['シャツ', 'ブラウス', 'ニット', 'セーター', 'tシャツ'],
+      'ボトムス': ['パンツ', 'スカート', 'ジーンズ', 'ショートパンツ'],
+      'コート': ['アウター'],
+      'ジャケット': ['アウター'],
+    };
+    
+    for (final entry in categoryMappings.entries) {
+      if (selectedCategory.contains(entry.key.toLowerCase())) {
+        return entry.value.any((related) => 
+          itemCategory.contains(related.toLowerCase()));
+      }
+    }
+    
+    return false;
   }
 
   @override
@@ -167,7 +202,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
     
     if (selectedCategories.isEmpty) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         child: Row(
           children: [
             Icon(
@@ -188,7 +223,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -234,7 +269,8 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
   List<Widget> _buildCategoryColumns() {
     final List<Widget> columns = [];
     
-    for (int level = 0; level < 5; level++) {
+    // 最大3カラムまでに制限して商品エリアのスペースを確保
+    for (int level = 0; level < 4; level++) {
       final categories = _getCurrentCategories(level);
       final selectedCategory = _selectedPath[level];
       
@@ -248,7 +284,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
 
   Widget _buildCategoryColumn(List<Category> categories, int level, Category? selectedCategory) {
     return Container(
-      width: 100.w,
+      width: 85.w,
       decoration: BoxDecoration(
         border: Border(
           right: BorderSide(
@@ -262,7 +298,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
         children: [
                      // カラムヘッダー
            Container(
-             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: AppTheme.lightGray,
               border: Border(
@@ -277,7 +313,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                  fontWeight: FontWeight.w500,
                  color: AppTheme.darkCharcoal,
-                 fontSize: 11.sp,
+                 fontSize: 10.sp,
                ),
              ),
           ),
@@ -306,7 +342,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
       child: InkWell(
         onTap: () => _selectCategory(category, level),
                  child: Container(
-           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
@@ -320,9 +356,9 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
                              if (category.icon != null) ...[
                  Text(
                    category.icon!,
-                   style: TextStyle(fontSize: 12.sp),
+                   style: TextStyle(fontSize: 10.sp),
                  ),
-                 SizedBox(width: 6.w),
+                 SizedBox(width: 4.w),
                ],
                              Expanded(
                  child: Text(
@@ -330,7 +366,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                      color: isSelected ? AppTheme.darkCharcoal : AppTheme.darkCharcoal,
                      fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-                     fontSize: 12.sp,
+                     fontSize: 11.sp,
                    ),
                    maxLines: 2,
                    overflow: TextOverflow.ellipsis,
@@ -353,6 +389,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
      final items = _getFilteredItems();
      
      return Expanded(
+       flex: 2, // 商品エリアを2倍の幅で優先表示
        child: Container(
          color: AppTheme.pureWhite,
          child: Column(
@@ -360,7 +397,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
            children: [
                      // アイテムヘッダー
            Container(
-             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: AppTheme.lightGray,
               border: Border(
@@ -405,12 +442,12 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
             child: items.isEmpty
                 ? _buildEmptyState()
                 : GridView.builder(
-                    padding: EdgeInsets.all(8.w),
+                    padding: EdgeInsets.all(6.w),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      crossAxisSpacing: 8.w,
-                      mainAxisSpacing: 12.h,
+                      childAspectRatio: 0.7,
+                      crossAxisSpacing: 6.w,
+                      mainAxisSpacing: 8.h,
                     ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
