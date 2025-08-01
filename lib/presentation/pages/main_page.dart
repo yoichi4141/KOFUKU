@@ -154,7 +154,7 @@ class FavoritePage extends ConsumerWidget {
   }
 }
 
-// 仮のメッセージページ
+// メッセージページ
 class MessagePage extends ConsumerWidget {
   const MessagePage({super.key});
 
@@ -173,35 +173,159 @@ class MessagePage extends ConsumerWidget {
           ),
         ),
         centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 64.sp,
-              color: AppTheme.softGray,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: AppTheme.darkCharcoal,
+              size: 22.sp,
             ),
-            SizedBox(height: 16.h),
-            Text(
-              'メッセージ機能は開発中です',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('検索機能は開発中です'),
+                  backgroundColor: AppTheme.darkCharcoal,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: _buildMessageList(),
+    );
+  }
+
+  Widget _buildMessageList() {
+    // ダミーデータを表示
+    final conversations = [
+      {
+        'title': '「ヴィンテージデニムジャケット」について',
+        'lastMessage': 'ありがとうございます！とても素敵なエッセイでした。',
+        'senderName': 'みどり',
+        'time': '3時間前',
+        'unread': 2,
+        'type': '🛍️',
+      },
+      {
+        'title': 'さくらさんとの会話',
+        'lastMessage': 'あいこさんの愛のエッセイ、本当に感動しました💖',
+        'senderName': 'さくら',
+        'time': '30分前',
+        'unread': 1,
+        'type': '💬',
+      },
+      {
+        'title': '「カシミヤコート」について',
+        'lastMessage': 'ぜひお譲りします。大切にしていただけるとのことで...',
+        'senderName': 'あいこ',
+        'time': '15分前',
+        'unread': 0,
+        'type': '🛍️',
+      },
+    ];
+
+    return ListView.builder(
+      padding: EdgeInsets.all(16.w),
+      itemCount: conversations.length,
+      itemBuilder: (context, index) {
+        final conv = conversations[index];
+        return Container(
+          margin: EdgeInsets.only(bottom: 12.h),
+          decoration: BoxDecoration(
+            color: AppTheme.pureWhite,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: AppTheme.subtleShadow,
+          ),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(16.w),
+            leading: Container(
+              width: 50.w,
+              height: 50.w,
+              decoration: BoxDecoration(
+                color: AppTheme.accentYellow.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(25.r),
+              ),
+              child: Center(
+                child: Text(
+                  conv['type'] as String,
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+              ),
+            ),
+            title: Text(
+              conv['title'] as String,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppTheme.softGray,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.darkCharcoal,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 8.h),
-            Text(
-              'アイテムの出品者や購入者との\nやりとりができるようになります',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppTheme.softGray,
-                height: 1.5,
-              ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 4.h),
+                Text(
+                  conv['lastMessage'] as String,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.softGray,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4.h),
+                Row(
+                  children: [
+                    Text(
+                      conv['senderName'] as String,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.softGray,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      conv['time'] as String,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.softGray,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+            trailing: conv['unread'] as int > 0
+                ? Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.loveRed,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Text(
+                      (conv['unread'] as int).toString(),
+                      style: TextStyle(
+                        color: AppTheme.pureWhite,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                : null,
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('チャット画面は開発中です'),
+                  backgroundColor: AppTheme.darkCharcoal,
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 } 
