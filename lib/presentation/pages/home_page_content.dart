@@ -279,7 +279,7 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.75, // 0.8 → 0.75に調整して高さを増やす
+                childAspectRatio: 0.7, // 0.75 → 0.7にさらに調整して高さを増やす
                 crossAxisSpacing: 16.w,
                 mainAxisSpacing: 20.h,
               ),

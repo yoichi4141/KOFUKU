@@ -116,7 +116,7 @@ class EmpathyItemCard extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h), // 上下パディング調整
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h), // パディングをさらに縮小
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min, // 最小サイズに制限
@@ -125,28 +125,28 @@ class EmpathyItemCard extends StatelessWidget {
                     Text(
                       item.title,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 12.sp, // 13sp → 12spに調整
+                        fontSize: 11.sp, // 12sp → 11spにさらに調整
                         fontWeight: FontWeight.w500,
-                        height: 1.2, // 1.3 → 1.2に調整
+                        height: 1.15, // 1.2 → 1.15にさらに調整
                         color: AppTheme.darkCharcoal,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     
-                    SizedBox(height: 3.h), // 4h → 3hに調整
+                    SizedBox(height: 2.h), // 3h → 2hにさらに調整
                     
                     // ペンネーム
                     Text(
                       item.ownerPenName,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 9.sp, // 10sp → 9spに調整
+                        fontSize: 8.sp, // 9sp → 8spにさらに調整
                         color: AppTheme.softGray,
-                        letterSpacing: 0.1, // 0.2 → 0.1に調整
+                        letterSpacing: 0.05, // 0.1 → 0.05にさらに調整
                       ),
                     ),
                     
-                    SizedBox(height: 6.h), // Spacerではなく固定サイズに変更
+                    SizedBox(height: 4.h), // 6h → 4hに調整
                     
                     // 価格
                     Row(
@@ -157,7 +157,7 @@ class EmpathyItemCard extends StatelessWidget {
                             (Match m) => '${m[1]},',
                           )}',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 13.sp, // 14sp → 13spに調整
+                            fontSize: 12.sp, // 13sp → 12spにさらに調整
                             fontWeight: FontWeight.w600,
                             color: AppTheme.darkCharcoal,
                           ),
@@ -166,14 +166,14 @@ class EmpathyItemCard extends StatelessWidget {
                         // 愛のエッセイアイコン
                         Icon(
                           Icons.article_outlined,
-                          size: 12.sp, // 14sp → 12spに調整
+                          size: 10.sp, // 12sp → 10spにさらに調整
                           color: AppTheme.accentYellow,
                         ),
-                        SizedBox(width: 2.w),
+                        SizedBox(width: 1.w), // 2w → 1wに調整
                         Text(
                           'Essay',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontSize: 8.sp, // 9sp → 8spに調整
+                            fontSize: 7.sp, // 8sp → 7spにさらに調整
                             color: AppTheme.accentYellow,
                             fontWeight: FontWeight.w500,
                           ),
