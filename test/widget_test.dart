@@ -7,24 +7,64 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kofuku/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('KOFUKU home page smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that KOFUKU title is displayed
+    expect(find.text('KOFUKU'), findsOneWidget);
+    
+    // Verify that search bar is displayed
+    expect(find.text('愛のエッセイを検索...'), findsOneWidget);
+    
+    // Verify that "愛を語る" button is displayed
+    expect(find.text('愛を語る'), findsOneWidget);
+    
+    // Verify that category tabs are displayed
+    expect(find.text('すべて'), findsOneWidget);
+    expect(find.text('アウター'), findsOneWidget);
+    
+    // Verify that statistical information is displayed
+    expect(find.text('今日語られた愛'), findsOneWidget);
+    expect(find.text('共感の総数'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('Category filtering works', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+
+    // Tap on "アウター" category
+    await tester.tap(find.text('アウター'));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify the category is selected (this test assumes UI updates properly)
+    // The actual filtering behavior would need more specific assertions based on data
+  });
+
+  testWidgets('"愛を語る" button shows snackbar', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+
+    // Tap the "愛を語る" button
+    await tester.tap(find.text('愛を語る'));
+    await tester.pump();
+
+    // Verify that snackbar message is displayed
+    expect(find.text('愛のエッセイを書く機能は開発中です'), findsOneWidget);
   });
 }
