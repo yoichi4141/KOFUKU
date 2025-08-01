@@ -445,7 +445,7 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
                     padding: EdgeInsets.all(6.w),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.65, // 0.7 → 0.65でさらに余裕を確保
+                      childAspectRatio: 0.55, // 0.65 → 0.55でさらに高さを確保
                       crossAxisSpacing: 6.w,
                       mainAxisSpacing: 8.h,
                     ),
