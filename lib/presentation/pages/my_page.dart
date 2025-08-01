@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/app_theme.dart';
-import '../../utils/dummy_profile_data.dart';
-import '../../domain/entities/user_profile.dart';
+import '../../utils/dummy_data.dart';
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
@@ -13,641 +12,373 @@ class MyPage extends ConsumerStatefulWidget {
   ConsumerState<MyPage> createState() => _MyPageState();
 }
 
-class _MyPageState extends ConsumerState<MyPage> with TickerProviderStateMixin {
-  late TabController _tabController;
-  final UserProfile _currentProfile = DummyProfileData.currentUserProfile;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _MyPageState extends ConsumerState<MyPage> {
+  // プロフィール用のダミーデータ
+  final String userName = 'Yoichi Nemoto';
+  final String followersCount = '1.2k フォロワー';
+  final String bio = '''私は、古着とその物語を愛しています。
+一着一着に宿る歴史と感情を大切にし、
+持続可能なファッションを通じて新しい価値を創造したいと考えています。''';
 
   @override
   Widget build(BuildContext context) {
+    final posts = DummyData.clothingItems.take(8).toList();
+
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       body: CustomScrollView(
         slivers: [
-          _buildProfileHeader(),
-          _buildStatsRow(),
-          _buildTabBar(),
-          _buildTabContent(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader() {
-    return SliverToBoxAdapter(
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
-          boxShadow: AppTheme.subtleShadow,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).padding.top),
-              Row(
-                children: [
-                  // アバター
-                  Container(
-                    width: 80.w,
-                    height: 80.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          AppTheme.accentYellow.withValues(alpha: 0.3),
-                          AppTheme.loveRed.withValues(alpha: 0.3),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      border: Border.all(
-                        color: AppTheme.accentYellow,
-                        width: 2.w,
+          // プロフィールヘッダー
+          SliverAppBar(
+            backgroundColor: AppTheme.pureWhite,
+            elevation: 0,
+            pinned: true,
+            expandedHeight: 0,
+            automaticallyImplyLeading: false,
+            flexibleSpace: SafeArea(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        // 戻るボタン（必要に応じて）
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: AppTheme.darkCharcoal,
+                        size: 20.sp,
                       ),
                     ),
-                    child: Center(
+                    Expanded(
                       child: Text(
-                        _currentProfile.displayName.substring(0, 1),
-                        style: TextStyle(
-                          fontSize: 32.sp,
+                        'Profile',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppTheme.darkCharcoal,
                         ),
                       ),
                     ),
-                  ),
-                  
-                  SizedBox(width: 16.w),
-                  
-                  // プロフィール情報
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              _currentProfile.displayName,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.darkCharcoal,
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 2.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _currentProfile.stats.activityLevel == ActivityLevel.veryActive 
-                                    ? AppTheme.loveRed.withValues(alpha: 0.1)
-                                    : AppTheme.accentYellow.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Text(
-                                _currentProfile.stats.activityLevel.emoji,
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                            ),
-                          ],
-                        ),
-                        
-                        SizedBox(height: 4.h),
-                        
-                        if (_currentProfile.location != null)
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 14.sp,
-                                color: AppTheme.softGray,
-                              ),
-                              SizedBox(width: 2.w),
-                              Text(
-                                _currentProfile.location!,
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppTheme.softGray,
-                                ),
-                              ),
-                            ],
-                          ),
-                        
-                        SizedBox(height: 8.h),
-                        
-                        // 評価とレビュー
-                        Row(
-                          children: [
-                            ...List.generate(5, (index) {
-                              return Icon(
-                                index < _currentProfile.stats.rating.floor()
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                size: 16.sp,
-                                color: AppTheme.accentYellow,
-                              );
-                            }),
-                            SizedBox(width: 8.w),
-                            Text(
-                              '${_currentProfile.stats.rating} (${_currentProfile.stats.reviewsCount})',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppTheme.softGray,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                    IconButton(
+                      onPressed: () {
+                        _showSettingsMenu();
+                      },
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: AppTheme.darkCharcoal,
+                        size: 24.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // プロフィールコンテンツ
+          SliverToBoxAdapter(
+            child: Container(
+              color: AppTheme.pureWhite,
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+              child: Column(
+                children: [
+                  // プロフィール画像
+                  Container(
+                    width: 120.w,
+                    height: 120.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 20,
+                          offset: Offset(0, 10),
                         ),
                       ],
                     ),
+                    child: ClipOval(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.lightGray,
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.accentYellow.withValues(alpha: 0.3),
+                              AppTheme.loveRed.withValues(alpha: 0.3),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 60.sp,
+                          color: AppTheme.darkCharcoal.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ),
                   ),
-                  
-                  // 設定ボタン
-                  IconButton(
-                    onPressed: () => _showSettingsBottomSheet(),
-                    icon: Icon(
-                      Icons.settings,
+
+                  SizedBox(height: 20.h),
+
+                  // ユーザー名
+                  Text(
+                    userName,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: AppTheme.darkCharcoal,
-                      size: 24.sp,
+                    ),
+                  ),
+
+                  SizedBox(height: 8.h),
+
+                  // フォロワー情報
+                  Text(
+                    followersCount,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.softGray,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+
+                  // 自己紹介
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppTheme.lightGray.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Text(
+                      bio,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.darkCharcoal,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
-              
-              SizedBox(height: 16.h),
-              
-              // 自己紹介
-              if (_currentProfile.bio != null)
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: AppTheme.lightGray,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Text(
-                    _currentProfile.bio!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            ),
+          ),
+
+          SizedBox(height: 24.h).toSliver(),
+
+          // 投稿グリッド
+          SliverToBoxAdapter(
+            child: Container(
+              color: AppTheme.pureWhite,
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'コレクション',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: AppTheme.darkCharcoal,
-                      height: 1.5,
                     ),
                   ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatsRow() {
-    final stats = _currentProfile.stats;
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.all(16.w),
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: AppTheme.subtleShadow,
-        ),
-        child: Row(
-          children: [
-            _buildStatItem('エッセイ', stats.essaysCount.toString(), Icons.article),
-            _buildStatDivider(),
-            _buildStatItem('共感', stats.empathyReceived.toString(), Icons.favorite),
-            _buildStatDivider(),
-            _buildStatItem('フォロワー', stats.followersCount.toString(), Icons.people),
-            _buildStatDivider(),
-            _buildStatItem('販売', stats.itemsSold.toString(), Icons.shopping_bag),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value, IconData icon) {
-    return Expanded(
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            size: 24.sp,
-            color: AppTheme.loveRed,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppTheme.darkCharcoal,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.softGray,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatDivider() {
-    return Container(
-      height: 40.h,
-      width: 1.w,
-      color: AppTheme.borderGray,
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
-    );
-  }
-
-  Widget _buildTabBar() {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16.w),
-        decoration: BoxDecoration(
-          color: AppTheme.pureWhite,
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: AppTheme.subtleShadow,
-        ),
-        child: TabBar(
-          controller: _tabController,
-          labelColor: AppTheme.darkCharcoal,
-          unselectedLabelColor: AppTheme.softGray,
-          indicatorColor: AppTheme.loveRed,
-          indicatorWeight: 3.h,
-          labelStyle: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w400,
-          ),
-          tabs: const [
-            Tab(text: 'エッセイ'),
-            Tab(text: '共感'),
-            Tab(text: '活動'),
-            Tab(text: '実績'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabContent() {
-    return SliverFillRemaining(
-      child: Container(
-        margin: EdgeInsets.all(16.w),
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildEssaysTab(),
-            _buildEmpathyTab(),
-            _buildActivityTab(),
-            _buildAchievementsTab(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEssaysTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.article,
-            size: 64.sp,
-            color: AppTheme.softGray,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'エッセイ一覧は開発中です',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppTheme.softGray,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'あなたが投稿した\n愛のエッセイを確認できます',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.softGray,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmpathyTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.favorite,
-            size: 64.sp,
-            color: AppTheme.loveRed,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            '共感したアイテム一覧は開発中です',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppTheme.softGray,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'あなたが共感したアイテムや\nエッセイを確認できます',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.softGray,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActivityTab() {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      itemCount: DummyProfileData.recentActivities.length,
-      itemBuilder: (context, index) {
-        final activity = DummyProfileData.recentActivities[index];
-        return Container(
-          margin: EdgeInsets.only(bottom: 12.h),
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: AppTheme.pureWhite,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: AppTheme.subtleShadow,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: AppTheme.accentYellow.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Center(
-                  child: Text(
-                    activity['icon'],
-                    style: TextStyle(fontSize: 18.sp),
+                  SizedBox(height: 16.h),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.0,
+                      crossAxisSpacing: 12.w,
+                      mainAxisSpacing: 12.h,
+                    ),
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      final item = posts[index];
+                      return _buildPostItem(item, index);
+                    },
                   ),
-                ),
+                ],
               ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      activity['description'],
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: AppTheme.darkCharcoal,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      activity['title'],
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.softGray,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                _formatTimeAgo(activity['time']),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.softGray,
-                  fontSize: 10.sp,
-                ),
-              ),
-            ],
+            ),
+          ),
+
+          SizedBox(height: 80.h).toSliver(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostItem(item, int index) {
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.title} を表示'),
+            backgroundColor: AppTheme.darkCharcoal,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 1),
           ),
         );
       },
-    );
-  }
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // 背景画像
+            Container(
+              decoration: BoxDecoration(
+                color: AppTheme.lightGray,
+                borderRadius: BorderRadius.circular(12.r),
+                image: item.imageUrls.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(item.imageUrls.first),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+            ),
 
-  Widget _buildAchievementsTab() {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      itemCount: DummyProfileData.achievements.length,
-      itemBuilder: (context, index) {
-        final achievement = DummyProfileData.achievements[index];
-        final earned = achievement['earned'] as bool;
-        
-        return Container(
-          margin: EdgeInsets.only(bottom: 12.h),
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: AppTheme.pureWhite,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: AppTheme.subtleShadow,
-            border: earned 
-                ? Border.all(color: AppTheme.accentYellow.withValues(alpha: 0.3), width: 1.w)
-                : null,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 50.w,
-                height: 50.w,
-                decoration: BoxDecoration(
-                  color: earned 
-                      ? AppTheme.accentYellow.withValues(alpha: 0.2)
-                      : AppTheme.softGray.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(25.r),
-                ),
-                child: Center(
-                  child: Opacity(
-                    opacity: earned ? 1.0 : 0.5,
-                    child: Text(
-                      achievement['icon'],
-                      style: TextStyle(fontSize: 24.sp),
-                    ),
-                  ),
+            // グラデーションオーバーレイ
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.3),
+                  ],
                 ),
               ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      achievement['title'],
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: earned ? AppTheme.darkCharcoal : AppTheme.softGray,
-                      ),
+            ),
+
+            // アイテム情報
+            Positioned(
+              bottom: 8.h,
+              left: 8.w,
+              right: 8.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      achievement['description'],
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.softGray,
-                      ),
-                    ),
-                    if (!earned && achievement.containsKey('progress'))
-                      Padding(
-                        padding: EdgeInsets.only(top: 8.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${(achievement['progress'] * 100).toInt()}% 達成',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppTheme.loveRed,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            LinearProgressIndicator(
-                              value: achievement['progress'],
-                              backgroundColor: AppTheme.borderGray,
-                              color: AppTheme.loveRed,
-                            ),
-                          ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '¥${item.price.toString()}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                  ],
-                ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            size: 10.sp,
+                            color: AppTheme.loveRed,
+                          ),
+                          SizedBox(width: 2.w),
+                          Text(
+                            item.empathyCount.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              if (earned)
-                Icon(
-                  Icons.check_circle,
-                  color: AppTheme.accentYellow,
-                  size: 20.sp,
-                ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  void _showSettingsBottomSheet() {
+  void _showSettingsMenu() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      isScrollControlled: true,
       builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
           color: AppTheme.pureWhite,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
         ),
+        padding: EdgeInsets.all(20.w),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40.w,
               height: 4.h,
-              margin: EdgeInsets.symmetric(vertical: 12.h),
               decoration: BoxDecoration(
                 color: AppTheme.borderGray,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Text(
-                '設定',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.darkCharcoal,
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                itemCount: DummyProfileData.settingsMenuItems.length,
-                itemBuilder: (context, index) {
-                  final item = DummyProfileData.settingsMenuItems[index];
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 8.h),
-                    child: ListTile(
-                      leading: Text(
-                        item['icon'],
-                        style: TextStyle(fontSize: 20.sp),
-                      ),
-                      title: Text(
-                        item['title'],
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: item['action'] == 'logout' 
-                              ? AppTheme.loveRed 
-                              : AppTheme.darkCharcoal,
-                        ),
-                      ),
-                      subtitle: Text(
-                        item['subtitle'],
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.softGray,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: AppTheme.softGray,
-                        size: 20.sp,
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${item['title']}は開発中です'),
-                            backgroundColor: AppTheme.darkCharcoal,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
+            SizedBox(height: 20.h),
+            _buildSettingsItem(Icons.edit, 'プロフィールを編集'),
+            _buildSettingsItem(Icons.privacy_tip, 'プライバシー設定'),
+            _buildSettingsItem(Icons.notifications, '通知設定'),
+            _buildSettingsItem(Icons.help, 'ヘルプ'),
+            _buildSettingsItem(Icons.logout, 'ログアウト'),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
     );
   }
 
-  String _formatTimeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays}日前';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}時間前';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}分前';
-    } else {
-      return 'たった今';
-    }
+  Widget _buildSettingsItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: AppTheme.darkCharcoal),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: AppTheme.darkCharcoal,
+        ),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$title が選択されました'),
+            backgroundColor: AppTheme.darkCharcoal,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      },
+    );
   }
+}
+
+// SizedBox用の拡張メソッド
+extension SizedBoxSliver on SizedBox {
+  Widget toSliver() => SliverToBoxAdapter(child: this);
 } 
