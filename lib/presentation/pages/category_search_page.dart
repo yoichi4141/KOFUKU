@@ -442,12 +442,12 @@ class _CategorySearchPageState extends ConsumerState<CategorySearchPage> {
             child: items.isEmpty
                 ? _buildEmptyState()
                 : GridView.builder(
-                    padding: EdgeInsets.all(6.w),
+                    padding: EdgeInsets.all(8.w),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.55, // 0.65 → 0.55でさらに高さを確保
-                      crossAxisSpacing: 6.w,
-                      mainAxisSpacing: 8.h,
+                      childAspectRatio: 0.42, // モバイル最適化: 十分な高さを確保
+                      crossAxisSpacing: 8.w,
+                      mainAxisSpacing: 12.h,
                     ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
