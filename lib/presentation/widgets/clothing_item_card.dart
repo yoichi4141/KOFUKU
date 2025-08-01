@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../domain/entities/clothing_item.dart';
+import '../../utils/app_theme.dart';
 
 class ClothingItemCard extends StatelessWidget {
   final ClothingItem item;
@@ -15,52 +16,70 @@ class ClothingItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12.r),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.pureWhite,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(
+            color: AppTheme.borderGray,
+            width: 0.5,
+          ),
+          boxShadow: AppTheme.subtleShadow,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 画像部分
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(12.r),
-              ),
-              child: AspectRatio(
-                aspectRatio: 1.0,
-                child: item.imageUrls.isNotEmpty
-                    ? Image.network(
-                        item.imageUrls.first,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[200],
+            Expanded(
+              flex: 3,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppTheme.lightGray,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(8.r),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(8.r),
+                  ),
+                  child: item.imageUrls.isNotEmpty
+                      ? Image.network(
+                          item.imageUrls.first,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppTheme.lightGray,
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_outlined,
+                                  size: 40.sp,
+                                  color: AppTheme.softGray,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: AppTheme.lightGray,
+                          child: Center(
                             child: Icon(
-                              Icons.image,
-                              size: 50.sp,
-                              color: Colors.grey[400],
+                              Icons.image_outlined,
+                              size: 40.sp,
+                              color: AppTheme.softGray,
                             ),
-                          );
-                        },
-                      )
-                    : Container(
-                        color: Colors.grey[200],
-                        child: Icon(
-                          Icons.image,
-                          size: 50.sp,
-                          color: Colors.grey[400],
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
             
             // コンテンツ部分
             Expanded(
+              flex: 2,
               child: Padding(
                 padding: EdgeInsets.all(12.w),
                 child: Column(
@@ -69,10 +88,11 @@ class ClothingItemCard extends StatelessWidget {
                     // タイトル
                     Text(
                       item.title,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                        height: 1.2,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        color: AppTheme.darkCharcoal,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -82,55 +102,52 @@ class ClothingItemCard extends StatelessWidget {
                     
                     // ペンネーム
                     Text(
-                      'by ${item.ownerPenName}',
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.grey[600],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    
-                    SizedBox(height: 6.h),
-                    
-                    // エッセイプレビュー
-                    Text(
-                      item.loveEssay,
-                      style: TextStyle(
+                      item.ownerPenName,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 10.sp,
-                        color: Colors.grey[700],
-                        height: 1.3,
+                        color: AppTheme.softGray,
+                        letterSpacing: 0.2,
                       ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     
                     const Spacer(),
                     
-                    // 共感数とWASURENAコイン
+                    // 価格と共感数
                     Row(
                       children: [
-                        Icon(
-                          Icons.favorite,
-                          size: 14.sp,
-                          color: Colors.red[400],
-                        ),
-                        SizedBox(width: 4.w),
+                        // 価格
                         Text(
-                          '${item.empathyCount}',
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Colors.red[400],
-                            fontWeight: FontWeight.w500,
+                          '¥${item.price.toString().replaceAllMapped(
+                            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                            (Match m) => '${m[1]},',
+                          )}',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.darkCharcoal,
                           ),
                         ),
+                        
                         const Spacer(),
-                        Text(
-                          '${item.price}W',
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                        
+                        // 共感数
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.favorite,
+                              size: 12.sp,
+                              color: AppTheme.loveRed,
+                            ),
+                            SizedBox(width: 3.w),
+                            Text(
+                              item.empathyCount.toString(),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontSize: 10.sp,
+                                color: AppTheme.loveRed,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

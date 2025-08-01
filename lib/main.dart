@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'injection.dart';
 import 'presentation/router/app_router.dart';
+import 'utils/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,10 +33,7 @@ class MyApp extends ConsumerWidget {
       builder: (context, child) {
         return MaterialApp.router(
           title: 'KOFUKU',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
+          theme: AppTheme.lightTheme,
           routerConfig: router,
         );
       },

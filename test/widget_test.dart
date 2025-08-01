@@ -24,7 +24,7 @@ void main() {
     expect(find.text('KOFUKU'), findsOneWidget);
     
     // Verify that search bar is displayed
-    expect(find.text('愛のエッセイを検索...'), findsOneWidget);
+    expect(find.text('愛のエッセイを検索'), findsOneWidget);
     
     // Verify that "愛を語る" button is displayed
     expect(find.text('愛を語る'), findsOneWidget);
@@ -34,7 +34,7 @@ void main() {
     expect(find.text('アウター'), findsOneWidget);
     
     // Verify that statistical information is displayed
-    expect(find.text('今日語られた愛'), findsOneWidget);
+    expect(find.text('愛のエッセイ'), findsOneWidget);
     expect(find.text('共感の総数'), findsOneWidget);
   });
 

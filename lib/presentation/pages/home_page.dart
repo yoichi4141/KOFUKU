@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../utils/dummy_data.dart';
+import '../../utils/app_theme.dart';
 import '../widgets/clothing_item_card.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -31,285 +32,361 @@ class _HomePageState extends ConsumerState<HomePage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          'KOFUKU',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
+      backgroundColor: AppTheme.lightGray,
+      body: CustomScrollView(
+        slivers: [
+          // カスタムAppBar
+          SliverAppBar(
+            backgroundColor: AppTheme.pureWhite,
+            elevation: 0,
+            pinned: true,
+            expandedHeight: 0,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.pureWhite,
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppTheme.borderGray,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+            ),
+            title: Text(
+              'KOFUKU',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2.0,
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.favorite_border, 
+                  color: AppTheme.darkCharcoal, size: 22.sp),
+                onPressed: () {},
+              ),
+              SizedBox(width: 8.w),
+            ],
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.favorite_border, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // 検索バー
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(16.w),
+
+          // ヒーローセクション
+          SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8.r),
+                gradient: AppTheme.primaryGradient,
               ),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: '愛のエッセイを検索...',
-                  hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'その服に、\nあなたの"愛"は\nありますか？',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w300,
+                      height: 1.2,
+                      color: AppTheme.darkCharcoal,
+                    ),
                   ),
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
+                  SizedBox(height: 16.h),
+                  Text(
+                    'HOSPITALITY IS BEAUTY',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppTheme.softGray,
+                      letterSpacing: 1.5,
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ),
+
+          // 検索バー
+          SliverToBoxAdapter(
+            child: Container(
+              color: AppTheme.pureWhite,
+              padding: EdgeInsets.all(24.w),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.lightGray,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: AppTheme.borderGray),
+                ),
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: '愛のエッセイを検索',
+                    hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.softGray,
+                    ),
+                    prefixIcon: Icon(Icons.search, 
+                      color: AppTheme.softGray, size: 20.sp),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
+                  ),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
             ),
           ),
 
           // カテゴリータブ
-          Container(
-            color: Colors.white,
-            height: 60.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              itemCount: DummyData.categories.length,
-              itemBuilder: (context, index) {
-                final category = DummyData.categories[index];
-                final isSelected = category == selectedCategory;
-                
-                return Padding(
-                  padding: EdgeInsets.only(right: 12.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = category;
-                      });
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey[300]!,
+          SliverToBoxAdapter(
+            child: Container(
+              color: AppTheme.pureWhite,
+              padding: EdgeInsets.only(bottom: 24.h),
+              child: SizedBox(
+                height: 50.h,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  itemCount: DummyData.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = DummyData.categories[index];
+                    final isSelected = category == selectedCategory;
+                    
+                    return Padding(
+                      padding: EdgeInsets.only(right: 16.w),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppTheme.darkCharcoal : Colors.transparent,
+                            borderRadius: BorderRadius.circular(25.r),
+                            border: Border.all(
+                              color: isSelected ? AppTheme.darkCharcoal : AppTheme.borderGray,
+                            ),
+                          ),
+                          child: Text(
+                            category,
+                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: isSelected ? AppTheme.pureWhite : AppTheme.softGray,
+                              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: isSelected ? Colors.white : Colors.grey[700],
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          Divider(height: 1.h, color: Colors.grey[200]),
-
-          // 愛の統計セクション
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    '今日語られた愛',
-                    '${DummyData.clothingItems.length}',
-                    Icons.favorite,
-                    Colors.red[400]!,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _buildStatCard(
-                    '共感の総数',
-                    '${DummyData.clothingItems.fold(0, (sum, item) => sum + item.empathyCount)}',
-                    Icons.sentiment_satisfied_alt,
-                    Colors.orange[400]!,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 8.h),
-
-          // アイテムグリッド
-          Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(16.w),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 12.w,
-                mainAxisSpacing: 12.h,
-              ),
-              itemCount: filteredItems.length,
-              itemBuilder: (context, index) {
-                final item = filteredItems[index];
-                return ClothingItemCard(
-                  item: item,
-                  onTap: () {
-                    // TODO: アイテム詳細画面への遷移
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${item.title} の詳細表示'),
-                        duration: const Duration(seconds: 1),
                       ),
                     );
                   },
-                );
-              },
+                ),
+              ),
             ),
+          ),
+
+          // 統計セクション（ダークセクション）
+          SliverToBoxAdapter(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppTheme.darkGradient,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+              child: Column(
+                children: [
+                  Text(
+                    'LOVE STORIES\nSHARED TODAY',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppTheme.accentYellow,
+                      fontWeight: FontWeight.w400,
+                      height: 1.2,
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          '${DummyData.clothingItems.length}',
+                          '愛のエッセイ',
+                          AppTheme.pureWhite,
+                        ),
+                      ),
+                      SizedBox(width: 16.w),
+                      Expanded(
+                        child: _buildStatCard(
+                          '${DummyData.clothingItems.fold(0, (sum, item) => sum + item.empathyCount)}',
+                          '共感の総数',
+                          AppTheme.pureWhite,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 商品グリッド
+          SliverPadding(
+            padding: EdgeInsets.all(24.w),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 16.w,
+                mainAxisSpacing: 16.h,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final item = filteredItems[index];
+                  return ClothingItemCard(
+                    item: item,
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${item.title} の詳細表示'),
+                          backgroundColor: AppTheme.darkCharcoal,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                childCount: filteredItems.length,
+              ),
+            ),
+          ),
+
+          // フッタースペース
+          SliverToBoxAdapter(
+            child: SizedBox(height: 100.h),
           ),
         ],
       ),
       
-      // メルカリ風フローティングアクションボタン
+      // 洗練されたフローティングアクションボタン
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: 愛のエッセイ投稿画面への遷移
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('愛のエッセイを書く機能は開発中です'),
-              duration: Duration(seconds: 2),
+              backgroundColor: AppTheme.darkCharcoal,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
             ),
           );
         },
-        backgroundColor: Theme.of(context).primaryColor,
-        icon: const Icon(Icons.edit, color: Colors.white),
+        backgroundColor: AppTheme.accentYellow,
+        foregroundColor: AppTheme.darkCharcoal,
+        icon: Icon(Icons.edit, size: 20.sp),
         label: Text(
           '愛を語る',
           style: TextStyle(
-            color: Colors.white,
             fontSize: 14.sp,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
           ),
         ),
       ),
       
-      // 下部ナビゲーション
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey[600],
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'ホーム',
+      // 洗練された下部ナビゲーション
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.pureWhite,
+          border: Border(
+            top: BorderSide(color: AppTheme.borderGray, width: 0.5),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '検索',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '共感',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'メッセージ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'マイページ',
-          ),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // ホーム（現在のページ）
-              break;
-            case 1:
-              // 検索ページ
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('検索機能は開発中です')),
-              );
-              break;
-            case 2:
-              // 共感ページ
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('共感機能は開発中です')),
-              );
-              break;
-            case 3:
-              // メッセージ
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('メッセージ機能は開発中です')),
-              );
-              break;
-            case 4:
-              // マイページ（既存のユーザー一覧に遷移）
-              context.go('/users');
-              break;
-          }
-        },
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          selectedItemColor: AppTheme.darkCharcoal,
+          unselectedItemColor: AppTheme.softGray,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined, size: 22.sp),
+              activeIcon: Icon(Icons.home, size: 22.sp),
+              label: 'ホーム',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search_outlined, size: 22.sp),
+              activeIcon: Icon(Icons.search, size: 22.sp),
+              label: '検索',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border, size: 22.sp),
+              activeIcon: Icon(Icons.favorite, size: 22.sp),
+              label: '共感',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_outline, size: 22.sp),
+              activeIcon: Icon(Icons.chat_bubble, size: 22.sp),
+              label: 'メッセージ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline, size: 22.sp),
+              activeIcon: Icon(Icons.person, size: 22.sp),
+              label: 'マイページ',
+            ),
+          ],
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                break;
+              case 1:
+                _showSnackBar(context, '検索機能は開発中です');
+                break;
+              case 2:
+                _showSnackBar(context, '共感機能は開発中です');
+                break;
+              case 3:
+                _showSnackBar(context, 'メッセージ機能は開発中です');
+                break;
+              case 4:
+                context.go('/users');
+                break;
+            }
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 24.sp, color: color),
-          SizedBox(height: 4.h),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+  Widget _buildStatCard(String value, String label, Color textColor) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: textColor,
+            fontWeight: FontWeight.w300,
           ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: Colors.grey[700],
-            ),
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: textColor.withValues(alpha: 0.7),
+            letterSpacing: 0.5,
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppTheme.darkCharcoal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
       ),
     );
   }
