@@ -8,6 +8,7 @@ import '../pages/onboarding/splash_page.dart';
 import '../pages/onboarding/welcome_page.dart';
 import '../pages/onboarding/signup_page.dart';
 import '../pages/onboarding/login_page.dart';
+import '../pages/category_search_page.dart';
 
 part 'app_router.g.dart';
 
@@ -48,6 +49,11 @@ GoRouter appRouter(Ref ref) {
         path: '/users',
         name: 'users',
         builder: (context, state) => const UserListPage(),
+      ),
+      GoRoute(
+        path: '/category-search',
+        name: 'category_search',
+        builder: (context, state) => const CategorySearchPage(),
       ),
     ],
   );

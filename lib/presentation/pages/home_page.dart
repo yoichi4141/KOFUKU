@@ -111,22 +111,29 @@ class _HomePageState extends ConsumerState<HomePage> {
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: AppTheme.borderGray),
                 ),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: '愛のエッセイを検索',
-                    hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.softGray,
-                    ),
-                    prefixIcon: Icon(Icons.search, 
-                      color: AppTheme.softGray, size: 20.sp),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
+                child: GestureDetector(
+                  onTap: () {
+                    context.go('/category-search');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
                       vertical: 16.h,
                     ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.search, 
+                          color: AppTheme.softGray, size: 20.sp),
+                        SizedBox(width: 12.w),
+                        Text(
+                          '愛のエッセイを検索',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.softGray,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
             ),
@@ -338,7 +345,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               case 0:
                 break;
               case 1:
-                _showSnackBar(context, '検索機能は開発中です');
+                context.go('/category-search');
                 break;
               case 2:
                 _showSnackBar(context, '共感機能は開発中です');
