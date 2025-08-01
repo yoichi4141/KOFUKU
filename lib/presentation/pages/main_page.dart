@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/app_theme.dart';
 import 'home_page_content.dart';
 import 'category_search_page.dart';
-import 'user_list_page.dart';
+import 'my_page.dart';
 import 'empathy_page.dart';
 
 class MainPage extends ConsumerStatefulWidget {
@@ -28,8 +28,8 @@ class _MainPageState extends ConsumerState<MainPage> {
       const HomePageContent(), // ボトムナビゲーションなしのホームページ
       const CategorySearchPage(), // 検索ページ
       const EmpathyPage(), // 共感ページ
-      const MessagePage(), // メッセージページ（仮）
-      const UserListPage(), // マイページ
+      const MessagePage(), // メッセージページ
+      const MyPage(), // マイページ
     ];
   }
 
