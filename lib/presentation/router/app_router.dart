@@ -9,6 +9,7 @@ import '../pages/onboarding/welcome_page.dart';
 import '../pages/onboarding/signup_page.dart';
 import '../pages/onboarding/login_page.dart';
 import '../pages/profile_edit_page.dart';
+import '../pages/notification_page.dart';
 // import '../pages/category_search_page.dart';
 
 part 'app_router.g.dart';
@@ -39,11 +40,16 @@ GoRouter appRouter(Ref ref) {
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
-      GoRoute(
-        path: '/profile-edit',
-        name: 'profile-edit',
-        builder: (context, state) => const ProfileEditPage(),
-      ),
+              GoRoute(
+          path: '/profile-edit',
+          name: 'profile-edit',
+          builder: (context, state) => const ProfileEditPage(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          name: 'notifications',
+          builder: (context, state) => const NotificationPage(),
+        ),
       
       // メインアプリ
       GoRoute(

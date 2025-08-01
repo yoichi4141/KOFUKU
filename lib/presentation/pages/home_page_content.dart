@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../utils/dummy_data.dart';
 import '../../utils/app_theme.dart';
+import '../../utils/dummy_notification_data.dart';
 
 class HomePageContent extends ConsumerStatefulWidget {
   const HomePageContent({super.key});
@@ -77,14 +79,34 @@ class _HomePageContentState extends ConsumerState<HomePageContent> {
                       ),
                     ),
                     
-                    // 通知アイコン
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.notifications_outlined,
-                        color: AppTheme.darkCharcoal,
-                        size: 24.sp,
-                      ),
+                    // 通知アイコン（未読バッジ付き）
+                    Stack(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            context.go('/notifications');
+                          },
+                          icon: Icon(
+                            Icons.notifications_outlined,
+                            color: AppTheme.darkCharcoal,
+                            size: 24.sp,
+                          ),
+                        ),
+                        // 未読バッジ（動的表示）
+                        if (DummyNotificationData.unreadCount > 0)
+                          Positioned(
+                            right: 8.w,
+                            top: 8.h,
+                            child: Container(
+                              width: 8.w,
+                              height: 8.h,
+                              decoration: BoxDecoration(
+                                color: AppTheme.loveRed,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),
