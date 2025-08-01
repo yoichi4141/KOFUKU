@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -97,10 +98,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
           gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              // 上部スペース
-              SizedBox(height: 120.h),
+              Column(
+                children: [
+                  // 上部スペース
+                  SizedBox(height: 120.h),
               
               // KOFUKU ロゴセクション
               Expanded(
@@ -201,8 +204,62 @@ class _SplashPageState extends ConsumerState<SplashPage>
                 ),
               ),
 
-              // 下部スペース
-              SizedBox(height: 80.h),
+                  // 下部スペース
+                  SizedBox(height: 80.h),
+                ],
+              ),
+              
+              // 開発用スキップボタン（デバッグモードのみ）
+              if (kDebugMode)
+                Positioned(
+                  top: 16.h,
+                  right: 16.w,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.darkCharcoal.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: AppTheme.accentYellow.withValues(alpha: 0.6),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20.r),
+                        onTap: () {
+                          context.go('/');
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.skip_next,
+                                color: AppTheme.accentYellow,
+                                size: 16.sp,
+                              ),
+                              SizedBox(width: 4.w),
+                              Text(
+                                'SKIP',
+                                style: TextStyle(
+                                  color: AppTheme.accentYellow,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

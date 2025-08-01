@@ -36,7 +36,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, 
             color: AppTheme.darkCharcoal, size: 20.sp),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/welcome');
+            }
+          },
         ),
         title: Text(
           'ログイン',

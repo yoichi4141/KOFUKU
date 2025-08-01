@@ -37,7 +37,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, 
             color: AppTheme.darkCharcoal, size: 20.sp),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/welcome');
+            }
+          },
         ),
         title: Text(
           '会員登録',
